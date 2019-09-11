@@ -2,8 +2,8 @@
 
 $server1c = 'localhost'
 $agentPort = '1540'
-$serviceName = '1C:Enterprise\ 8\.3\ Server\ Agent\ \(x86-64\)'
-$comObjectName = 'V83.ComConnector'
+$serviceName = '1C:Enterprise\ 8\.3\ Server\ Agent'
+$comObjectName = 'V83.COMConnector'
 
 function getWorkingProcessPID {
    
@@ -21,6 +21,11 @@ function getWorkingProcessPID {
 
    $Cluster = $Clusters[0]
    $ServerAgent.Authenticate($Cluster, "", "")
+
+   $Cluster.LifeTimeLimit = 30
+
+   $ServerAgent.SetClusterRecyclingByTime($Cluster, $Cluster.LifeTimeLimit)
+   $ServerAgent.SetClusterRecyclingExpirationTimeout($Cluster, 10)
 
    $WorkingProcesses = $ServerAgent.GetWorkingProcesses($Cluster);
 
@@ -69,6 +74,8 @@ function startService {
 
 }
 
-stopService
-sleep 10
-startService
+$pids1c = getWorkingProcessPID
+
+# stopService
+# sleep 10
+# startService
